@@ -1,9 +1,3 @@
 # Welcome
 
-<script src="https://utteranc.es/client.js"
-          repo="sys-design-interview/sys-design-interview.github.io"
-          issue-term="title"
-          theme="github-light"
-          crossorigin="anonymous"
-          async>
-</script>
+[Count number of concurrent users in a website](http://sys-design-interview.github.io/concurrent-visitors)
