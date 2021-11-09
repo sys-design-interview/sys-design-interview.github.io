@@ -5,9 +5,11 @@
 number of concurrent visitors to the website.
 
 ---
+
 > **_NOTE:_**  The question above is (intentionally) very vague. The \
 interviewer is expecting you to ask clarifying questions to reduce the \
 scope of the problem.
+
 ---
 
 ## Clarifying questions
@@ -18,10 +20,12 @@ web-page which has either some static HTML or other interactive elements in it?
 **Interviewer**: Not a live-streaming platform. Similar to expedia-like site.
 
 ---
+
 > **_NOTE:_** If this is a live-streaming website, we would have websocket \
 servers maintaining connections to the each client who is watching the stream. \
 So, the number of concurrent viewers would be the number of open websocket \
 connections at any given time.
+
 ---
 
 **Candidate**: What is the typical QPS (queries-per-second) to the website?
