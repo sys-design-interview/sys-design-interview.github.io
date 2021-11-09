@@ -141,7 +141,7 @@ in the "fast"-path scenario.
 
 ***Failure scenarios***
 
-1.  **Webserver crashes**
+**Webserver crashes**
 
 Since we are storing the counts in-memory, a webserver crash could lead to loss\
 of data. Even though the counts are persisted in timeseries DB, the store \
@@ -169,7 +169,7 @@ Other options (which are inferior, IMO) include:
   want to introduce extra complexity in the system, and are willing to have inaccuracy.
 
 
-2. **Client may not send close-events properly**
+**Client may not send close-events properly**
 
 We rely on the client to send the `close_session()` request and to detect timeouts.\
 This may not work in some scenarios like:
