@@ -167,7 +167,7 @@ count equal to 0.
 Other options (which are inferior, IMO) include:
 
 * Having a "shadow" webserver for each instance. When one crashes, the other can\
-  take over seemlessly. This has the disadvantage of consuming twice the resource\
+  take over seamlessly. This has the disadvantage of consuming twice the resource\
   footprint, just for handling the failover case.
 * No failover mechanism. This results in loss of data. Could be ok if we don't \
   want to introduce extra complexity in the system, and are willing to have inaccuracy.
