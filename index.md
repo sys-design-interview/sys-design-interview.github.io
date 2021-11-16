@@ -9,6 +9,7 @@ You can also send in your comments/feedback at sd.interviewprep@gmail.com
 * [Count number of concurrent users in a website](http://sys-design-interview.github.io/concurrent-visitors)
 * [Typeahead suggestions for search](http://sys-design-interview.github.io/typeahead-suggestion)
 
+<head>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LDBDG3X3CZ"></script>
 <script>
@@ -18,3 +19,4 @@ You can also send in your comments/feedback at sd.interviewprep@gmail.com
 
   gtag('config', 'G-LDBDG3X3CZ');
 </script>
+</head>

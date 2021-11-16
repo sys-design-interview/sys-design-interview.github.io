@@ -274,6 +274,7 @@ below. Always ready to accept feedback and improve!
           async>
 </script>
 
+<head>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LDBDG3X3CZ"></script>
 <script>
@@ -283,3 +284,4 @@ below. Always ready to accept feedback and improve!
 
   gtag('config', 'G-LDBDG3X3CZ');
 </script>
+</head>
