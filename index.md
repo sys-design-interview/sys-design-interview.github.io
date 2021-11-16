@@ -1,7 +1,5 @@
 # System design interview questions
 
-<meta name="google-site-verification" content="EbvEkdn2KKroC3w0z8c5VbMTnu2yZrEiclM0wWydD9I" />
-
 Here is the list of posts that describe system-design interview-questions
 in a candidate-interviewer discussion-style.
 
