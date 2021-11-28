@@ -6,7 +6,7 @@ Design an online judge like leetcode.
 ## Table of contents
 * [Clarifying questions](#clarifying-questions)
 * [High level design](#high-level-design)
-* [Components' descriptions and responsibilities](components-descriptions-and-responsibilities)
+* [Components' descriptions and responsibilities](#components-descriptions-and-responsibilities)
     * [Code submission](#code-submission)
     * [Controller](#controller)
     * [Queue](#queue)
