@@ -160,3 +160,115 @@ For the design to work properly, we'd need the queue to satisfy certain properti
 A simple choice for a queue with those properties could be Amazon SQS. It persists \
 messages, and allows us to set "visibility timeout" on a per-item basis. This \
 would be similar to the "lease" mechanism describe above.
+
+
+### Data model, persistent store choice
+
+We'll have the following entities:
+
+|`User` table|
+|--|
+user_id (PK)
+name
+email
+
+|`Questions` table|
+|--|
+question_id (PK)
+path_to_content_file
+path_to_test_cases_file
+path_to_solutions_file
+
+|`UserSubmissions` table|
+|--|
+user_id (FK)
+submission_id (PK)
+question_id (FK)
+submission_timestamp (indexed)
+path_to_code_contents
+status (`PENDING`, `ENQUEUED`, `WRONG_ANSWER`, `ACCEPTED`, `TLE`, ...)
+last_update_timestamp
+
+The `Controller` and `Worker` components would be mainly working on the `UserSubmissions` \
+table, as it contains all the "work-item" information.
+
+Given that the number of submits per second is going to be ~100, it seems ok to \
+have a MySQL database for our system.
+
+An alternative set up would be to have the `UserSubmissions` table be a NoSQL database, \
+as that is the table which receives most number of writes. One possible way to set \
+up the key for the NoSQL db would be:
+
+Key: `<user_id>`-`<submission_timestamp>`-`<question_id>` \
+Value (column-families): status, path_to_code_contents, last_updated_timestamp
+
+With the above key, we can do a quick range-scan for a user's submissions over a \
+time-period. That helps with efficiently showing the submission history.
+
+Having said that, I would lean towards having MySQL as my choice for DB, given the \ 
+low write-QPS.
+
+### Failure scenarios (+ other interesting scenarios, talking points etc)
+
+#### Controller crashes/fails
+In order to be more resilient to controller failures, we should have 3 (or 5) replicas \
+of the controller running. At any given time, the "master" controller is elected \
+via master election. If the master fails, we can run another round of election \
+to elect another new controller. That way, the new controller can resume operations \
+quickly. Only the master will be able to enqueue items to the queue.
+
+#### "Enqueue" operation fails
+If an "enqueue" on the queue fails, the controller can retry with exponential \
+backoff. If it still fails after multiple attempts, we can update the persistent \
+store status of this work item to `INTERNAL_ERROR` and have alerts on these items.
+
+#### Talking point: At-least-once delivery property of the queue
+Our choice of queue is SQS, which guarantees at-least-once delivery. This means \
+that there could be duplicate items inserted into the queue. But then, this is ok \
+as long as there are not too many of these duplicates. The worst that could happen \
+is that we would end up re-processing the same work-item multiple times. Given the \
+evaluation process done in the worker is idempotent, the correctness will not be \
+affected.
+
+#### Ensuring a work-item is processed by only one worker at a time
+We will use the "visibility timeout" feature of the queue to make sure that any \
+work-item that de-queues the item will not be "visible" to other workers.
+
+#### Worker failures
+After a worker picks up an item from the queue, it runs a background thread to \
+keep "extending the lease" by small amounts (say, 10 minutes). This serves 2 purposes:\
+
+* the message remains "invisible" to other workers, and hence prevents other workers \
+  from picking up the same work-item.
+* the small "lease extensions" act as "heartbeats" of the worker. If a worker crashes \
+  for some reason, its lease on the work-item will expire, which makes it "visible" \
+  to other workers. This way, the work-item will be acted on by another worker.
+
+NOTE: the "lease" can be seen as just manipulating the "visibility timeout" of the \
+message in the queue.
+
+#### Talking point: Monitoring
+In order to monitor the overall end-to-end latency, and other failure cases, we \
+can have an optional service that reads the persistent store and computes reports \
+and exports metrics for end-to-end latency, failures etc.
+
+### Sandbox (isolation, protection from malicious programs)
+
+Each worker should run in a sandbox environment for the following reasons: \
+* to prevent itself from malicious scripts being submitted by the coders.
+* catch and terminate programs that exceed time-limit.
+* catch programs that exceed memory limit (disk output limits etc.)
+
+This is a whole topic in itself, and we may not be able to go too deep into this \
+topic. But some high-level options could be:
+
+* Use VMs which have specified amount of RAM/disk/CPU
+    * Pros: resource management is easy, isolation is easy to achieve.
+    * Cons: VMs have a high overhead performance-wise, and may not be quick.
+* Use `SIGALARM` for time-limit-exceeded.
+    * Have a C++ program that spawns a new process to execute the incoming code.
+      We can terminate the process once we have an alarm that triggers after a \
+      predefined time-limit. The driver code could then report an error and update \
+      status accordingly.
+* Use `setrlimit` for resource limits. (available in C/C++).
+
