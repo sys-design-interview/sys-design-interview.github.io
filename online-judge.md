@@ -4,6 +4,24 @@
 Design an online judge like leetcode.
 
 ## Table of contents
+* [Clarifying questions](#clarifying-questions)
+* [High level design](#high-level-design)
+* [Components' descriptions and responsibilities](#components-descriptions-and-responsibilities)
+    * [Code submission](#code-submission)
+    * [Controller](#controller)
+    * [Queue](#queue)
+    * [Workers](#workers)
+    * [Properties of the "queue"](#properties-of-the-queue)
+ * [Data model](#data-model)
+ * [Failure scenarios](#failure-scenarios)
+ * [Controller crashes/fails](#controller-crashesfails)
+ * ["Enqueue" operation fails](#enqueue-operation-fails)
+ * [Talking point: At-least-once delivery property of the queue](#talking-point-at-least-once-delivery-property-of-the-queue)
+ * [Ensuring a work-item is processed by only one worker at a time](#ensuring-a-work-item-is-processed-by-only-one-worker-at-a-time)
+ * [Worker failures](#worker-failures)
+ * [Talking point: Monitoring](#talking-point-monitoring)
+ * [Sandbox (isolation, protection from malicious programs)](#sandbox-isolation-protection-from-malicious-programs)
+ * [Note to readers](#note-to-readers)
 
 ## Clarifying questions
 
@@ -122,7 +140,7 @@ detect the new submission and work on it.
   in the persistent store.
 
 
-### Queue(s)
+### Queue
 These contain the pending work-items (code submissions) that need to be evaluated.\
 The main benefits of the queue are:
 * parallelism: Multiple workers dequeue items from the queue. Each worker can \
@@ -162,7 +180,7 @@ messages, and allows us to set "visibility timeout" on a per-item basis. This \
 would be similar to the "lease" mechanism describe above.
 
 
-### Data model, persistent store choice
+## Data model
 
 We'll have the following entities:
 
@@ -205,24 +223,24 @@ Value (column-families): status, path_to_code_contents, last_updated_timestamp
 With the above key, we can do a quick range-scan for a user's submissions over a \
 time-period. That helps with efficiently showing the submission history.
 
-Having said that, I would lean towards having MySQL as my choice for DB, given the \ 
+Having said that, I would lean towards having MySQL as my choice for DB, given the \
 low write-QPS.
 
-### Failure scenarios (+ other interesting scenarios, talking points etc)
+## Failure scenarios
 
-#### Controller crashes/fails
+### Controller crashes/fails
 In order to be more resilient to controller failures, we should have 3 (or 5) replicas \
 of the controller running. At any given time, the "master" controller is elected \
 via master election. If the master fails, we can run another round of election \
 to elect another new controller. That way, the new controller can resume operations \
 quickly. Only the master will be able to enqueue items to the queue.
 
-#### "Enqueue" operation fails
+### "Enqueue" operation fails
 If an "enqueue" on the queue fails, the controller can retry with exponential \
 backoff. If it still fails after multiple attempts, we can update the persistent \
 store status of this work item to `INTERNAL_ERROR` and have alerts on these items.
 
-#### Talking point: At-least-once delivery property of the queue
+### Talking point: At-least-once delivery property of the queue
 Our choice of queue is SQS, which guarantees at-least-once delivery. This means \
 that there could be duplicate items inserted into the queue. But then, this is ok \
 as long as there are not too many of these duplicates. The worst that could happen \
@@ -230,13 +248,13 @@ is that we would end up re-processing the same work-item multiple times. Given t
 evaluation process done in the worker is idempotent, the correctness will not be \
 affected.
 
-#### Ensuring a work-item is processed by only one worker at a time
+### Ensuring a work-item is processed by only one worker at a time
 We will use the "visibility timeout" feature of the queue to make sure that any \
 work-item that de-queues the item will not be "visible" to other workers.
 
-#### Worker failures
+### Worker failures
 After a worker picks up an item from the queue, it runs a background thread to \
-keep "extending the lease" by small amounts (say, 10 minutes). This serves 2 purposes:\
+keep "extending the lease" by small amounts (say, 10 minutes). This serves 2 purposes:
 
 * the message remains "invisible" to other workers, and hence prevents other workers \
   from picking up the same work-item.
@@ -247,14 +265,14 @@ keep "extending the lease" by small amounts (say, 10 minutes). This serves 2 pur
 NOTE: the "lease" can be seen as just manipulating the "visibility timeout" of the \
 message in the queue.
 
-#### Talking point: Monitoring
+### Talking point: Monitoring
 In order to monitor the overall end-to-end latency, and other failure cases, we \
 can have an optional service that reads the persistent store and computes reports \
 and exports metrics for end-to-end latency, failures etc.
 
-### Sandbox (isolation, protection from malicious programs)
+## Sandbox (isolation, protection from malicious programs)
 
-Each worker should run in a sandbox environment for the following reasons: \
+Each worker should run in a sandbox environment for the following reasons:
 * to prevent itself from malicious scripts being submitted by the coders.
 * catch and terminate programs that exceed time-limit.
 * catch programs that exceed memory limit (disk output limits etc.)
@@ -272,3 +290,29 @@ topic. But some high-level options could be:
       status accordingly.
 * Use `setrlimit` for resource limits. (available in C/C++).
 
+# Note to readers
+
+If you see any issues with the existing approach, or would like to suggest \
+improvements, please send an email to sd.interviewprep@gmail.com, or comment \
+below. Always ready to accept feedback and improve!
+
+
+<script src="https://utteranc.es/client.js"
+          repo="sys-design-interview/sys-design-interview.github.io"
+          issue-term="title"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+</script>
+
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LDBDG3X3CZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LDBDG3X3CZ');
+</script>
+</head>
