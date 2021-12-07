@@ -217,12 +217,10 @@ We'll have the following entities:
 
 
 |`User` table|
-
-|--|
-
-user\_id (PK)
-name
-email
+|-|
+|user\_id (PK)|
+|name|
+|email|
 
 
 |`Questions` table|
