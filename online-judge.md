@@ -215,28 +215,32 @@ would be similar to the "lease" mechanism describe above.
 
 We'll have the following entities:
 
+
 |`User` table|
 |--|
-user_id (PK)
+user\_id (PK)
 name
 email
 
+
 |`Questions` table|
 |--|
-question_id (PK)
-path_to_content_file
-path_to_test_cases_file
-path_to_solutions_file
+question\_id (PK)
+path\_to\_content\_file
+path\_to\_test\_cases\_file
+path\_to\_solutions\_file
+
 
 |`UserSubmissions` table|
 |--|
-user_id (FK)
-submission_id (PK)
-question_id (FK)
-submission_timestamp (indexed)
-path_to_code_contents
+user\_id (FK)
+submission\_id (PK)
+question\_id (FK)
+submission\_timestamp (indexed)
+path\_to\_code\_contents
 status (`PENDING`, `ENQUEUED`, `WRONG_ANSWER`, `ACCEPTED`, `TLE`, ...)
-last_update_timestamp
+last\_update\_timestamp
+
 
 The `Controller` and `Worker` components would be mainly working on the `UserSubmissions` \
 table, as it contains all the "work-item" information.
@@ -249,7 +253,7 @@ as that is the table which receives most number of writes. One possible way to s
 up the key for the NoSQL db would be:
 
 Key: `<user_id>`-`<submission_timestamp>`-`<question_id>` \
-Value (column-families): status, path_to_code_contents, last_updated_timestamp
+Value (column-families): status, path\_to\_code\_contents, last\_updated\_timestamp
 
 With the above key, we can do a quick range-scan for a user's submissions over a \
 time-period. That helps with efficiently showing the submission history.
