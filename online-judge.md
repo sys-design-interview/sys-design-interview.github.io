@@ -217,7 +217,9 @@ We'll have the following entities:
 
 
 |`User` table|
+
 |--|
+
 user\_id (PK)
 name
 email
