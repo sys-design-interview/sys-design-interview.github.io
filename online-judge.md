@@ -224,22 +224,22 @@ We'll have the following entities:
 
 
 |`Questions` table|
-|--|
-question\_id (PK)
-path\_to\_content\_file
-path\_to\_test\_cases\_file
-path\_to\_solutions\_file
+|-|
+|question\_id (PK)
+|path\_to\_content\_file
+|path\_to\_test\_cases\_file
+|path\_to\_solutions\_file
 
 
 |`UserSubmissions` table|
-|--|
-user\_id (FK)
-submission\_id (PK)
-question\_id (FK)
-submission\_timestamp (indexed)
-path\_to\_code\_contents
-status (`PENDING`, `ENQUEUED`, `WRONG_ANSWER`, `ACCEPTED`, `TLE`, ...)
-last\_update\_timestamp
+|-|
+|user\_id (FK)|
+|submission\_id (PK)|
+|question\_id (FK)|
+|submission\_timestamp (indexed)|
+|path\_to\_code\_contents|
+|status (`PENDING`, `ENQUEUED`, `WRONG_ANSWER`, `ACCEPTED`, `TLE`, ...)|
+|last\_update\_timestamp|
 
 
 The `Controller` and `Worker` components would be mainly working on the `UserSubmissions` \
