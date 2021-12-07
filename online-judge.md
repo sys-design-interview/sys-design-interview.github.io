@@ -21,6 +21,7 @@ Design an online judge like leetcode.
  * [Worker failures](#worker-failures)
  * [Talking point: Monitoring](#talking-point-monitoring)
  * [Sandbox (isolation, protection from malicious programs)](#sandbox-isolation-protection-from-malicious-programs)
+ * [References](#references)
  * [Note to readers](#note-to-readers)
 
 ## Clarifying questions
@@ -324,6 +325,17 @@ topic. But some high-level options could be:
       predefined time-limit. The driver code could then report an error and update \
       status accordingly.
 * Use `setrlimit` for resource limits. (available in C/C++).
+
+## References
+
+* [Dropbox's article which has a similar design](https://dropbox.tech/infrastructure/asynchronous-task-scheduling-at-dropbox)
+    * This article is based on the dropbox article from high-level architecture perspective.
+
+* [Mock interview from Clement Mihailescu's YouTube channel](https://www.youtube.com/watch?v=q0KGYwNbf-0)
+    * The solution described in this video does not have a queue. All the workers poll \
+      a MySQL database and select the pending item to work on. In order to prevent multiple \
+      workers from picking up the same item, they use transaction capability of MySQL database. \
+      However, as mentioned earlier in the post, that might lead to bottleneck on DB reads.
 
 # Note to readers
 
