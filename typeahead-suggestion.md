@@ -286,7 +286,7 @@ This way, we have clear interactions between persistent-store and other sub-syst
 # Note to readers
 
 If you see any issues with the existing approach, or would like to suggest \
-improvements, please send an email to sd.interviewprep@gmail.com, or comment \
+improvements, please send an email to contact@sys-design-interview.com, or comment \
 below. Always ready to accept feedback and improve!
 
 <!-- Begin Mailchimp Signup Form -->
