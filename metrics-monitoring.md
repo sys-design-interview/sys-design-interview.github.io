@@ -365,9 +365,9 @@ the immutable property of the metrics data here. After the hour passes by, we kn
 we will not mutate that row's data. So, we can just merge all the columns' data \
 into one blob (maybe in json format) and write it into a separate column.
 
-|Key                     |+0  | +1 | +2 |... |+35  |...|+3600|blob               |
-|-                       | -  | -  | -  |-   | -   |-  |-    |-                  |
-|`0.service_a.cpu.10pm`  |~1~ |~4~ |~7~ |~11~| ~123~ |-|-    |`{0:1 1:4 2:7 ...}`|
+|Key                     |  +0  | +1   | +2   |...   |+35  |...|+3600|blob               |
+|-                       | -    | -    | -    |-     | -   |-  |-    |-                  |
+|`0.service_a.cpu.10pm`  |~~1~~ |~~4~~ |~~7~~ |~~11~~|...  |-  |-    |`{0:1 1:4 2:7 ...}`|
 
 
 The numbers that have been struck-through above are "deleted" and added to the "blob"\
@@ -412,7 +412,7 @@ direct the query for the anything before 4 hours to read the downsampled column.
   tiered storage approach:
   * data for the last ~4 hours are stored in memory (with write-ahead-log)
   * after that, it is moved to bigtable (using the data in write-ahead-log)
-  * data more than ~6-12 months can be moved to even cheaper storage)
+  * data more than ~6-12 months can be moved to even cheaper storage (if available)
   * querying should be aware of these tiers and send+collect the results accordingly.
 * Flesh out the alerting system design.
 
