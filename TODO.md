@@ -7,6 +7,7 @@
 |[Online judge (like leetcode, hackerrank, codechef)](https://sys-design-interview.com/online-judge)       |Done       |
 |[Metrics monitoring system](https://sys-design-interview.com/metrics-monitoring)                          |Done       |
 |Proximity server/Yelp                                                                                     |In progress|
+|TinyURL with multi-datacenter support                                                                     |Not started|
 |Calendar                                                                                                  |Not started|
 |Config push system                                                                                        |Not started|
 |Zoom/Google Meet                                                                                          |Not started|
@@ -36,6 +37,9 @@
   * [This article](https://kousiknath.medium.com/system-design-design-a-geo-spatial-index-for-real-time-location-search-10968fe62b9c)
     has some useful details and other links.
 
+* TinyURL with multi-datacenter support
+  * 1000:1 read-to-write ratio
+  * main challenges include replication scheme for datastore, caching strategy etc.
 
 * Zoom/Google Meet
   * probably need to understand WebRTC, RTP, STUN, TURN server etc.
