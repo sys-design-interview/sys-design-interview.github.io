@@ -52,6 +52,8 @@
   * architecture might look similar to the chat/FB messenger design
   * another main challenge is conflict resolution.
   * [Operational transformation visualization](https://operational-transformation.github.io/)
+  * [Etherpad's version of operational transformation](https://github.com/ether/etherpad-lite/blob/develop/doc/easysync/easysync-full-description.pdf)
+  * [Medium article with more links](https://medium.com/coinmonks/operational-transformations-as-an-algorithm-for-automatic-conflict-resolution-3bf8920ea447)
 
 * FB searching billions of posts
   * Data volume is a challenge. Might need to restrict search to last ~6 months.
